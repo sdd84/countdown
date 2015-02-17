@@ -59,6 +59,8 @@
     });
 
     var CountDownClock = React.createClass({
+      var dur = moment.duration(this.props.duration);
+
       render: function() {
         return (
           <div className="countDownClock">

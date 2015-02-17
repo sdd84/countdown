@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang='en-GB'>
+<head>
+  <meta charset='utf-8'>
+  <title>Ractive test</title>
+</head>
+
+<body>
+  <div id='container'></div>
+  <script id='template' type='text/ractive'>
+    <div className="countDownBox">
+      <h1>Zeit bis zum Abholen:</h1>
+      <div className="countDownText">
+        {{formatDuration(duration)}}
+      </div>
+      <CountDownClock duration={this.state.duration} />
+    </div>
+  </script>
+  <script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
+  <script src="moment.js"></script>
+  <script>
+    function getDuration() {
+      return moment.duration(new moment("2015-03-18 15:00:00").diff(new moment()));
+    }
+
+    var ractive = new Ractive({
+      el: 'container',
+      template: '#template',
+      data: {
+        duration: getDuration(),
+        formatDuration: function formatDuration(dur) {
+
+          var data = [
+            [ Math.floor(dur.asDays()), " Tage" ],
+            [ dur.hours(), " Stunden" ],
+            [ dur.minutes(), " Minuten" ],
+            [ dur.seconds(), " Sekunden" ]
+          ];
+
+          return "Es dauert noch " + data.map(function(d) {
+            return d[0] ? d[0] + d[1] : false;
+          }).reduce(function(a, b) {
+            return b ? a + ", " + b : a;
+          });
+        },
+      }
+    });
+
+    setInterval(function() { ractive.set('duration', getDuration());}, 500);
+  </script>
+</body>
+</html>
