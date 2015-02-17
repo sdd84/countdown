@@ -1,0 +1,77 @@
+<!-- index.html -->
+<html>
+  <head>
+    <title>React countdown</title>
+    <script src="http://fb.me/react-0.12.2.js"></script>
+    <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+    <script src="moment.js"></script>
+  </head>
+  <body>
+    <div id="content"></div>
+    <script type="text/jsx">
+    var CountDownBox = React.createClass({
+      getDuration: function() {
+        var dur = moment.duration(new moment("2015-03-18 15:00:00").diff(new moment()));
+        this.setState({ duration: dur });
+      },
+      getInitialState: function() {
+        return {duration: 0};
+      },
+      componentDidMount: function() {
+        this.getDuration();
+        setInterval(this.getDuration, this.props.pollInterval);
+      },
+      render: function() {
+        return (
+          <div className="countDownBox">
+            <h1>Zeit bis zum abholen:</h1>
+            <CountDownText duration={this.state.duration} />
+            <CountDownClock duration={this.state.duration} />
+          </div>
+        );
+      }
+    });
+
+    var CountDownText = React.createClass({
+      render: function() {
+        var dur = moment.duration(this.props.duration);
+
+        var data = [
+          [ Math.floor(dur.asDays()), " Tage" ],
+          [ dur.hours(), " Stunden" ],
+          [ dur.minutes(), " Minuten" ],
+          [ Math.round(dur.seconds()), " Sekunden" ]
+        ];
+
+        var msg =  "Es dauert noch " + data.map(function(d) {
+          return d[0] ? d[0] + d[1] : false;
+        }).reduce(function(a, b) {
+          return b ? a + ", " + b : a;
+        });
+
+        return (
+          <div className="countDownText">
+            Countdown text {msg}
+          </div>
+        );
+      }
+    });
+
+    var CountDownClock = React.createClass({
+      render: function() {
+        return (
+          <div className="countDownClock">
+            Countdown clock {this.props.duration}
+          </div>
+        );
+      }
+    });
+
+    React.render(
+      <CountDownBox pollInterval={500} />,
+      document.getElementById('content')
+    );
+    </script>
+  </body>
+</html>
